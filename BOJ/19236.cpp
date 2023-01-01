@@ -1,3 +1,5 @@
+// gold 2
+
 // brute force + simulation
 // passing values, not address using vectors
 
