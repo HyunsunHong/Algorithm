@@ -1,1 +1,1 @@
-# Algorithm-
+# Algorithmic problem solving
