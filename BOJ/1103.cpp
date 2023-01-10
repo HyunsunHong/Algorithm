@@ -3,6 +3,12 @@
 
     dp(top-down) + dfs + backtracking 
 
+    1. cache[r][c][dir] 의 의미 : (r, c)에서 시작하여 dir방향으로 움직였을 때, 움직일 수 있는 칸의 최대값, -1은 한번도 탐색 x, 0은 탐색중, 양수는 탐색 완료된 값
+
+    2. dfs중에, cache값 0을 만나면 조상상을 만났으므로, 사이클 발견 -> INF로 값 수정
+
+    3. ret을 모두 탐색 후 최종적인 ret값으로 cache값 변경 -> '0'(탐색 중)표시를 유지하기 위해
+
 */
 
 #include <iostream>
