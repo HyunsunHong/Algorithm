@@ -1,5 +1,9 @@
 /*
 
+dp, top-down
+
+cache[day][coupon]
+: day, coupon의 상태에서 시작할때, day의 리소트 방문여부에 맞게 처리 한 후 N일까지 리소트 방문여부에 맞게 처리 할 때 최소 비용
 
 */
 #include <iostream>
