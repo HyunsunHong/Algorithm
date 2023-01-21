@@ -2,7 +2,6 @@
     to modify:
     1. gravity : buttom_air, visited revise
 */
-
 #include <iostream>
 #include <vector>
 #include <cstring>
@@ -16,7 +15,7 @@ using namespace std;
 int R, C, N;
 vector<string> map;
 int dr[4] = {0, 0, 1, -1};
-int dc[4] = {1, -1, 0, 0,};
+int dc[4] = {1, -1, 0, 0};
 
 bool possible(int r, int c) {
     if(r < 0 || r > R - 1) return false;
@@ -39,6 +38,7 @@ void gravity_bfs(int r, int c, bool visited[][100]) {
     queue<pair<int, int> > q;
     vector<pair<int, int> > buttom_air_vec;
     vector<pair<int, int> > cluster_vec;
+    bool buttom_reach = false;
 
     visited[r][c] = true;
     cluster_vec.push_back(make_pair(r, c));
@@ -58,26 +58,23 @@ void gravity_bfs(int r, int c, bool visited[][100]) {
                 visited[next_r][next_c] = true;
                 q.push(make_pair(next_r, next_c));
 
-                if(next_r == buttom_r) buttom_vec.push_back(make_pair(next_r, next_c));
-                else if(next_r > buttom_r) {
-                    buttom_vec.clear();
-                    buttom_vec.push_back(make_pair(next_r, next_c));
-                    buttom_r = next_r;
-                }
+                if(next_r == R - 1) buttom_reach = true;
+                else if(map[next_r + 1][next_c] == '.') buttom_air_vec.push_back(make_pair(next_r, next_c));
             }
         }
     }  
 
-    if(buttom_r != R - 1) {
+    if(!buttom_reach) {
         int dr_drop = R;
 
-        for(auto p : buttom_vec) {
-            r = p.first;
+        for(auto p : buttom_air_vec) {
+            r = p.first + 1;
             c = p.second;
 
             while(possible(r, c) && map[r][c] == '.') r++;
+            r--;
 
-            dr_drop = min(dr_drop, r - p.first - 1);
+            dr_drop = min(dr_drop, r - p.first);
         }
 
         for(auto p : cluster_vec) {
@@ -85,18 +82,22 @@ void gravity_bfs(int r, int c, bool visited[][100]) {
             c = p.second;
 
             map[r][c] = '.';
+        }
+        for(auto p : cluster_vec) {
+            r = p.first;
+            c = p.second;
+
             map[r + dr_drop][c] = 'x';
         }
     }
-
-
 }
 
 void bomb(int r, int c) {
     // bomb!
     cout << "bomb! : " << r << " " <<  c << "\n";
-    map[r][c] = '.';
+    map[r][c] = 'B';
     debug_print();
+    map[r][c] = '.';
 
     bool visited[100][100];
     memset(visited, false, sizeof(visited));
@@ -122,7 +123,7 @@ void bomb(int r, int c) {
 }
 
 void shot(int h, int dir) {
-    int shot_r = R -h;
+    int shot_r = R - h;
     int shot_c;
     int dc;
 
