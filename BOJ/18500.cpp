@@ -1,6 +1,8 @@
 /* 
-    to modify:
-    1. gravity : buttom_air, visited revise
+    gold 1
+    
+    simulation + implementation + bfs
+
 */
 #include <iostream>
 #include <vector>
@@ -39,10 +41,16 @@ void gravity_bfs(int r, int c, bool visited[][100]) {
     vector<pair<int, int> > buttom_air_vec;
     vector<pair<int, int> > cluster_vec;
     bool buttom_reach = false;
+    bool region[100][100];
 
+    memset(region, false, sizeof(region));
+
+    region[r][c] = true;
     visited[r][c] = true;
     cluster_vec.push_back(make_pair(r, c));
     q.push(make_pair(r, c));
+    if(possible(r + 1, c) && map[r + 1][c] == '.') buttom_air_vec.push_back(make_pair(r, c));
+    if(r == R - 1) buttom_reach = true;
 
     while(!q.empty()) {
         r = q.front().first;
@@ -54,17 +62,19 @@ void gravity_bfs(int r, int c, bool visited[][100]) {
             int next_c = c + dc[i];
 
             if(possible(next_r, next_c) && !visited[next_r][next_c] && map[next_r][next_c] == 'x') {
+                region[next_r][next_c] = true;
                 cluster_vec.push_back(make_pair(next_r, next_c));
                 visited[next_r][next_c] = true;
                 q.push(make_pair(next_r, next_c));
 
                 if(next_r == R - 1) buttom_reach = true;
-                else if(map[next_r + 1][next_c] == '.') buttom_air_vec.push_back(make_pair(next_r, next_c));
+                else if(possible(next_r + 1, next_c) && map[next_r + 1][next_c] == '.') buttom_air_vec.push_back(make_pair(next_r, next_c));
             }
         }
     }  
 
     if(!buttom_reach) {
+
         int dr_drop = R;
 
         for(auto p : buttom_air_vec) {
@@ -72,21 +82,25 @@ void gravity_bfs(int r, int c, bool visited[][100]) {
             c = p.second;
 
             while(possible(r, c) && map[r][c] == '.') r++;
-            r--;
-
-            dr_drop = min(dr_drop, r - p.first);
+            
+            if(!possible(r, c) || !region[r][c]) {
+                r--;
+                dr_drop = min(dr_drop, r - p.first);
+            }
         }
 
         for(auto p : cluster_vec) {
             r = p.first;
             c = p.second;
-
+            
+            visited[r][c] = false;
             map[r][c] = '.';
         }
         for(auto p : cluster_vec) {
             r = p.first;
             c = p.second;
 
+            visited[r + dr_drop][c] = true;
             map[r + dr_drop][c] = 'x';
         }
     }
@@ -94,9 +108,6 @@ void gravity_bfs(int r, int c, bool visited[][100]) {
 
 void bomb(int r, int c) {
     // bomb!
-    cout << "bomb! : " << r << " " <<  c << "\n";
-    map[r][c] = 'B';
-    debug_print();
     map[r][c] = '.';
 
     bool visited[100][100];
@@ -109,17 +120,9 @@ void bomb(int r, int c) {
 
         if(possible(next_r, next_c) && !visited[next_r][next_c] && map[next_r][next_c] == 'x') {
             gravity_bfs(next_r, next_c, visited);
-            cout << "after : " << next_r << " " << next_c << "\n";
-            char temp = map[next_r][next_c];
-            char temp1 = map[r][c];
-            map[r][c] = 'B';
-            map[next_r][next_c] = '!';
-            debug_print();
-            map[next_r][next_c] = temp;
-            map[r][c] = temp1;
-        } //6 6 4 3 1
+        } 
     }
-    
+
 }
 
 void shot(int h, int dir) {
