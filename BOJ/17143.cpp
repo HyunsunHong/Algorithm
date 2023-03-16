@@ -93,23 +93,6 @@ void move_shark() {
     Map = next_Map;
 }
 
-void print_debug() {
-
-    cout << "\n\n";
-    for(int r = 1; r <= R; r++) {
-        for(int c = 1; c <= C; c++) {
-            if(!Map[r][c].empty()) {
-                cout << "s";
-            }
-            else {
-                cout << "e";
-            }
-        }
-        cout << "\n";
-    }
-    cout << "\n\n";
-}
-
 int main() {
 
     cin >> R >> C >> M;
